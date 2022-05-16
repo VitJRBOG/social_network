@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=social_network
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwe
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: web
+    ports:
+      - 80:80
+    environment:
+      - DJANGO_SECRET_KEY="django-insecure-c2srtbu@y$jsum#ezne#$zc22)^h^d$tng2xrdi^z@&d)0uz$g"
+      - DJANGO_DEBUG_MODE=1
+      - DJANGO_LANGUAGE_CODE=ru
+      - DJANGO_TIMEZONE=UTC
+      - POSTGRES_DB=social_network
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwe
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
