@@ -11,16 +11,16 @@ class AddProfile(APIView):
 
     def post(self, request: Request):
         try:
-        serializer = ProfileSerializer(data=request.data)
+            serializer = ProfileSerializer(data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
+            if serializer.is_valid():
+                serializer.save()
 
                 return Response({
                         'status': 200,
                         'response': request.data
                     })
-        else:
+            else:
                 return Response({
                         'status': 400,
                         'response': serializer.errors
@@ -37,7 +37,7 @@ class GetProfileInfo(APIView):
 
     def get(self, request: Request):
         try:
-        id_ = request.query_params.get('id')
+            id_ = request.query_params.get('id')
 
             if id_ is None:
                 return Response({
@@ -50,17 +50,17 @@ class GetProfileInfo(APIView):
                         }
                     })
 
-        queryset = Profile.objects.filter(id=id_)
+            queryset = Profile.objects.filter(id=id_)
 
-            if queryset.count == 0:
+            if queryset.count() == 0:
                 return Response({
                         'status': 404,
                         'response': 'Записей с указанным "id" не найдено.'
                     })
 
-        serializer = ProfileSerializer(instance=queryset, many=True)
+            serializer = ProfileSerializer(instance=queryset, many=True)
 
-        return Response(serializer.data)
+            return Response(serializer.data)
             
         except Exception as e:
             logging.Logger('warning').warning(e)
@@ -74,7 +74,7 @@ class DeleteProfile(APIView):
     
     def post(self, request: Request):
         try:
-        id_ = request.query_params.get('id')
+            id_ = request.query_params.get('id')
 
             if id_ is None:
                 return Response({
@@ -87,7 +87,7 @@ class DeleteProfile(APIView):
                         }
                     })
 
-        queryset = Profile.objects.filter(id=id_)
+            queryset = Profile.objects.filter(id=id_)
 
             if queryset.count() == 0:
                 return Response({
@@ -95,7 +95,7 @@ class DeleteProfile(APIView):
                         'response': 'Записей с указанным "id" не найдено.'
                     })
 
-        queryset.delete()
+            queryset.delete()
 
             return Response({
                     'status': 200
@@ -107,4 +107,3 @@ class DeleteProfile(APIView):
                     'status': 500,
                     'response': 'Ошибка удаления Профиля.'
                 })
-
