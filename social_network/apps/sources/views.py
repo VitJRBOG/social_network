@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from utils import logging
-from .models import Blog
+from .models import Blog, BlogPost
 from .serializers import BlogSerializer, BlogPostSerializer
 from ..accounts.models import Profile
 
@@ -86,8 +86,6 @@ class DeleteBlog(APIView):
         try:
             id_ = request.query_params.get('id')
 
-            print(id_)
-
             if id_ is None:
                 return Response({
                     'status': 400,
@@ -153,4 +151,30 @@ class AddBlogPost(APIView):
             return Response({
                     'status': 500,
                     'response': 'Ошибка создания поста блога.'
+                })
+
+
+class GetBlogPost(APIView):
+    def get(self, request: Request):
+        try:
+            queryset = BlogPost.objects.all()
+
+            if queryset.count() == 0:
+                return Response({
+                        'status': 404,
+                        'response': 'Ни одной записи не найдено.'
+                    })
+
+            serializer = BlogPostSerializer(instance=queryset, many=True)
+
+            return Response({
+                    'status': 200,
+                    'response': serializer.data
+                })
+
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка получения постов блога.'
                 })

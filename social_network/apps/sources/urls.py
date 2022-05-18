@@ -9,4 +9,5 @@ urlpatterns = [
     path('blog/delete', views.DeleteBlog.as_view()),
 
     path('blogpost/add', views.AddBlogPost.as_view()),
+    path('blogpost/get', views.GetBlogPost.as_view()),
 ]
