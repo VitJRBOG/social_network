@@ -73,11 +73,38 @@ class GetProfileInfo(APIView):
 class DeleteProfile(APIView):
     
     def post(self, request: Request):
+        try:
         id_ = request.query_params.get('id')
 
+            if id_ is None:
+                return Response({
+                    'status': 400,
+                    'response': {
+                        'id':
+                            [
+                                'Обязательное поле.'
+                            ]
+                        }
+                    })
+
         queryset = Profile.objects.filter(id=id_)
-        count = queryset.count()
+
+            if queryset.count() == 0:
+                return Response({
+                        'status': 404,
+                        'response': 'Записей с указанным "id" не найдено.'
+                    })
 
         queryset.delete()
 
-        return Response(count)
+            return Response({
+                    'status': 200
+                })
+
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка удаления Профиля.'
+                })
+
