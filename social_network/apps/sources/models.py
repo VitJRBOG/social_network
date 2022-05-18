@@ -2,6 +2,7 @@ from django.db import models
 
 class Blog(models.Model):
     id = models.AutoField('Идентификатор', primary_key=True)
+    name = models.CharField('Название', max_length=256)
     profile_id = models.IntegerField('Идентификатор профиля')
 
     def __init__(self, profile_id: int):
