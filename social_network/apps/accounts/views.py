@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from utils import logging
-from .models import Profile
+from .models import Following, Profile
 from .serializers import ProfileSerializer, FollowingSerializer
 from ..sources.models import Blog
 
@@ -151,5 +151,31 @@ class AddFollowing(APIView):
             return Response({
                     'status': 500,
                     'response': 'Ошибка создания Подписки.'
+                })
+
+
+class GetFollowingInfo(APIView):
+    def get(self, request: Request):
+        try:
+            queryset = Following.objects.all()
+
+            if queryset.count() == 0:
+                return Response({
+                        'status': 404,
+                        'response': 'Ни одной записи не найдено.'
+                    })
+
+            serializer = FollowingSerializer(instance=queryset, many=True)
+
+            return Response({
+                    'status': 200,
+                    'response': serializer.data
+                })
+
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка получения подписок.'
                 })
 

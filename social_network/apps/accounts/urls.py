@@ -9,4 +9,5 @@ urlpatterns = [
     path('profile/delete', views.DeleteProfile.as_view()),
 
     path('following/add', views.AddFollowing.as_view()),
+    path('following/get', views.GetFollowingInfo.as_view()),
 ]
