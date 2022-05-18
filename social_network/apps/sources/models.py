@@ -16,11 +16,17 @@ class Blog(models.Model):
 
 class BlogPost(models.Model):
     id = models.AutoField('Идентификатор', primary_key=True)
+    title = models.CharField('Заголовок', max_length=50)
+    text = models.TextField('Текст', max_length=140)
+    date = models.IntegerField('Дата создания')
     blog_id = models.IntegerField('Идентификатор блога')
 
-    def __init__(self, blog_id: int):
+    def __init__(self, title: str, date: int, blog_id: int, text: str = ''):
         super().__init__()
 
+        self.title = title
+        self.text = text
+        self.date = date
         self.blog_id = blog_id
 
     class Meta:
