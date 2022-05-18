@@ -36,12 +36,38 @@ class AddProfile(APIView):
 class GetProfileInfo(APIView):
 
     def get(self, request: Request):
+        try:
         id_ = request.query_params.get('id')
 
+            if id_ is None:
+                return Response({
+                    'status': 400,
+                    'response': {
+                        'id':
+                            [
+                                'Обязательное поле.'
+                            ]
+                        }
+                    })
+
         queryset = Profile.objects.filter(id=id_)
+
+            if queryset.count == 0:
+                return Response({
+                        'status': 404,
+                        'response': 'Записей с указанным "id" не найдено.'
+                    })
+
         serializer = ProfileSerializer(instance=queryset, many=True)
 
         return Response(serializer.data)
+            
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка запроса выборки Профилей.'
+                })
 
 
 class DeleteProfile(APIView):
