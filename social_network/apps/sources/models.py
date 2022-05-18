@@ -14,7 +14,7 @@ class BlogPost(models.Model):
     id = models.AutoField('Идентификатор', primary_key=True)
     title = models.CharField('Заголовок', max_length=50)
     text = models.TextField('Текст', max_length=140)
-    date = models.IntegerField('Дата создания')
+    date = models.CharField('Дата создания', max_length=20)
     blog_id = models.IntegerField('Идентификатор блога')
 
     class Meta:

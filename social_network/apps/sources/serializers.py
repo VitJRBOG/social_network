@@ -15,7 +15,7 @@ class BlogPostSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     title = serializers.CharField(max_length=50)
     text = serializers.CharField(max_length=140)
-    date = serializers.IntegerField()
+    date = serializers.CharField(max_length=20)
     blog_id = serializers.IntegerField()
 
     def create(self, validated_data):
