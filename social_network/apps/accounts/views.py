@@ -28,3 +28,16 @@ class GetProfileInfo(APIView):
         serializer = ProfileSerializer(instance=queryset, many=True)
 
         return Response(serializer.data)
+
+
+class DeleteProfile(APIView):
+    
+    def post(self, request: Request):
+        id_ = request.query_params.get('id')
+
+        queryset = Profile.objects.filter(id=id_)
+        count = queryset.count()
+
+        queryset.delete()
+
+        return Response(count)
