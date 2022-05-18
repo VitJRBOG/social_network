@@ -15,7 +15,7 @@ class AddBlog(APIView):
 
             if serializer.is_valid():
 
-                profile_id = serializer.validated_data.get('profile_id')  # type: ignore
+                profile_id = request.query_params.get('profile_id')
 
                 if not Profile.objects.filter(id=profile_id).exists():
                     return Response({
