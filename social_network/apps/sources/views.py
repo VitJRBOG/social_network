@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from utils import logging
 from .models import Blog
-from .serializers import BlogSerializer
+from .serializers import BlogSerializer, BlogPostSerializer
 from ..accounts.models import Profile
 
 
@@ -118,4 +118,39 @@ class DeleteBlog(APIView):
             return Response({
                     'status': 500,
                     'response': 'Ошибка удаления Блога.'
+                })
+
+
+class AddBlogPost(APIView):
+    def post(self, request: Request):
+        try:
+            serializer = BlogPostSerializer(data=request.data)
+
+            if serializer.is_valid():
+
+                blog_id = request.query_params.get('blog_id')
+
+                if not Blog.objects.filter(id=blog_id).exists():
+                    return Response({
+                            'status': 404,
+                            'response': 'Блог с указанным "blog_id" не найден.'
+                        })
+
+                serializer.save()
+
+                return Response({
+                        'status': 200,
+                        'response': request.data
+                    })
+            else:
+                return Response({
+                        'status': 400,
+                        'response': serializer.errors
+                    })
+        
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка создания поста блога.'
                 })
