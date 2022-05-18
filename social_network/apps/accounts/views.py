@@ -19,7 +19,7 @@ class AddProfile(APIView):
 
                 return Response({
                         'status': 200,
-                        'response': request.data
+                        'response': serializer.data
                     })
             else:
                 return Response({
