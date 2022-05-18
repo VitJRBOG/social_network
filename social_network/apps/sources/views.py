@@ -126,7 +126,7 @@ class AddBlogPost(APIView):
 
             if serializer.is_valid():
 
-                blog_id = request.query_params.get('blog_id')
+                blog_id = serializer.validated_data.get('blog_id')  # type: ignore
 
                 if not Blog.objects.filter(id=blog_id).exists():
                     return Response({
