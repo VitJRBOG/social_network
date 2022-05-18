@@ -2,7 +2,7 @@ from django.db import models
 
 class Profile(models.Model):
     id = models.AutoField('Идентификатор', primary_key=True)
-    name = models.TextField('Полное имя', max_length=256)
+    name = models.CharField('Полное имя', max_length=256)
 
     def __init__(self, name: str):
         super().__init__()
