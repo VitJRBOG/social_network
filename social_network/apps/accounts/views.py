@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 
 from utils import logging
 from .models import Profile
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, FollowingSerializer
+from ..sources.models import Blog
 
 
 class AddProfile(APIView):
@@ -110,3 +111,45 @@ class DeleteProfile(APIView):
                     'status': 500,
                     'response': 'Ошибка удаления Профиля.'
                 })
+
+
+class AddFollowing(APIView):
+    def post(self, request: Request):
+        try:
+            serializer = FollowingSerializer(data=request.data)
+
+            if serializer.is_valid():
+                profile_id = serializer.validated_data.get('profile_id')  # type: ignore
+
+                if not Profile.objects.filter(id=profile_id).exists():
+                    return Response({
+                            'status': 404,
+                            'response': 'Профиль с указанным "profile_id" не найден.'
+                        })
+
+                blog_id = serializer.validated_data.get('blog_id')  # type: ignore
+
+                if not Blog.objects.filter(id=blog_id).exists():
+                    return Response({
+                            'status': 404,
+                            'response': 'Блог с указанным "blog_id" не найден.'
+                        })
+
+                serializer.save()
+
+                return Response({
+                        'status': 200,
+                        'response': request.data
+                    })
+            else:
+                return Response({
+                    'status': 400,
+                    'response': serializer.errors
+                })
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка создания Подписки.'
+                })
+
