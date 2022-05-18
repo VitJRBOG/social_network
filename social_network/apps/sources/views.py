@@ -183,7 +183,7 @@ class GetBlogPost(APIView):
 class DeleteBlogPost(APIView):
     def post(self, request: Request):
         try:
-            id_ = request.query_params.get('id')
+            id_ = request.POST.get('id')  # type: ignore
 
             if id_ is None:
                 return Response({
