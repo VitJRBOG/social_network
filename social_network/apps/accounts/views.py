@@ -60,7 +60,10 @@ class GetProfileInfo(APIView):
 
             serializer = ProfileSerializer(instance=queryset, many=True)
 
-            return Response(serializer.data)
+            return Response({
+                    'status': 200,
+                    'response': serializer.data
+                })
             
         except Exception as e:
             logging.Logger('warning').warning(e)
