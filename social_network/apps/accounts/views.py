@@ -2,6 +2,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from utils import logging
 from .models import Profile
 from .serializers import ProfileSerializer
 
@@ -9,14 +10,27 @@ from .serializers import ProfileSerializer
 class AddProfile(APIView):
 
     def post(self, request: Request):
+        try:
         serializer = ProfileSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
 
-            return Response(request.data)
+                return Response({
+                        'status': 200,
+                        'response': request.data
+                    })
         else:
-            return Response(serializer.errors)
+                return Response({
+                        'status': 400,
+                        'response': serializer.errors
+                    })
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка создания Профиля.'
+                })
 
 
 class GetProfileInfo(APIView):
