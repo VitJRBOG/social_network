@@ -14,8 +14,8 @@ class ProfileSerializer(serializers.Serializer):
 
 class FollowingSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    profile = serializers.IntegerField(source='profile.id')
-    blog = serializers.IntegerField(source='blog.id')
+    profile_id = serializers.IntegerField()
+    blog_id = serializers.IntegerField()
 
     def create(self, validated_data):
         return Following.objects.create(**validated_data)
