@@ -282,25 +282,50 @@ class AddBlogPostReadMark(APIView):
 class GetBlogPostReadMark(APIView):
     def get(self, request: Request):
         try:
-            id_ = request.query_params.get('id')
+            profile_id = request.query_params.get('profile_id')
 
-            if id_ is None:
+            if profile_id is None:
                 return Response({
                     'status': 400,
                     'response': {
-                        'id':
+                        'profile_id':
                             [
                                 'Обязательное поле.'
                             ]
                         }
                     })
 
-            queryset = BlogPostReadMark.objects.filter(id=id_)
+            if not Profile.objects.filter(id=profile_id).exists():
+                return Response({
+                        'status': 404,
+                        'response': 'Профиль с указанным "profile_id" не найден.'
+                    })
+
+            blogpost_id = request.query_params.get('blogpost_id')
+
+            if blogpost_id is None:
+                return Response({
+                    'status': 400,
+                    'response': {
+                        'blogpost_id':
+                            [
+                                'Обязательное поле.'
+                            ]
+                        }
+                    })
+
+            if not BlogPost.objects.filter(id=blogpost_id).exists():
+                return Response({
+                        'status': 404,
+                        'response': 'Пост с указанным "blogpost_id" не найден.'
+                    })
+
+            queryset = BlogPostReadMark.objects.filter(profile_id=profile_id).filter(blogpost_id=blogpost_id)
 
             if queryset.count() == 0:
                 return Response({
                         'status': 404,
-                        'response': 'Записей с указанным "id" не найдено.'
+                        'response': 'Записей с указанными "profile_id" и "blogpost_id" не найдено.'
                     })
 
             serializer = BlogPostReadMarkSerializer(instance=queryset, many=True)
