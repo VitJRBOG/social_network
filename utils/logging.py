@@ -22,7 +22,8 @@ class Logger(logging.Logger):
 
     def __add_warning_logger_params(self):
         self.setLevel(logging.WARNING)
-        msg_format = '%(asctime)s - [%(levelname)s] - PID: ' + \
+        msg_format = '%(asctime)s - [%(levelname)s] - ' + \
+            '(%(filename)s).%(funcName)s(%(lineno)d) - PID: ' + \
             '{} - %(message)s'.format(os.getpid())
         self.__add_filehandler(msg_format)
 
