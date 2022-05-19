@@ -81,9 +81,13 @@ class AddProfile(APIView):
 class GetProfileInfo(APIView):
 
     def get(self, request: Request):
-        try:
-            id_ = request.query_params.get('id')
+        id_ = request.query_params.get('id')
 
+        response = self.select(id_)
+        return response
+
+    def select(self, id_):
+        try:
             if id_ is None:
                 return Response({
                     'status': 400,
