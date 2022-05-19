@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Blog, BlogPost
+from .models import Blog, BlogPost, BlogPostReadMark
 
 class BlogSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -20,3 +20,12 @@ class BlogPostSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return BlogPost.objects.create(**validated_data)
+
+
+class BlogPostReadMarkSerializer(serializers.Serializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    profile_id = serializers.IntegerField()
+    blogpost_id = serializers.IntegerField()
+
+    def create(self, validated_data):
+        return BlogPostReadMark.objects.create(**validated_data)

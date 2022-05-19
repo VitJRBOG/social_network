@@ -20,3 +20,13 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = 'Пост блога'
         verbose_name_plural = 'Посты блога'
+
+
+class BlogPostReadMark(models.Model):
+    id = models.AutoField('Идентификатор', primary_key=True)
+    profile_id = models.IntegerField('Идентификатор профиля')
+    blogpost_id = models.IntegerField('Идентификатор поста блога')
+
+    class Meta:
+        verbose_name = 'Метка "прочитано"'
+        verbose_name_plural = 'Метки "прочитано"'
