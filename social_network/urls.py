@@ -6,4 +6,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('social_network.apps.accounts.urls')),
     path('api/sources/', include('social_network.apps.sources.urls')),
+    path('api/feeds/', include('social_network.apps.feeds.urls')),
 ]
