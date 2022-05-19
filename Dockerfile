@@ -4,3 +4,4 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY manage.py manage.py
 COPY social_network social_network
+COPY utils utils
