@@ -21,9 +21,15 @@ class GetFeed(APIView):
         try:
             followings_resp = GetFollowingInfo().select(profile_id)
 
+            if followings_resp.data['status'] != 200:
+                return followings_resp
+
             blog_ids = self.__parse_followings_for_blogs(followings_resp.data)
 
             blogposts_resp = GetBlogPost().select(blog_ids, offset)
+
+            if blogposts_resp.data['status'] != 200:
+                return blogposts_resp
 
             feed_posts = self.__compose_feed_posts(profile_id, blogposts_resp.data)
 
@@ -61,6 +67,8 @@ class GetFeed(APIView):
                 'blog_id': blogpost['blog_id'],
                 'blog_name': blog_name,
                 'blogpost_id': blogpost['id'],
+                'title': blogpost['title'],
+                'text': blogpost['text'],
                 'is_read': readmark,
             }
             feed_posts.append(feed_post)
