@@ -44,9 +44,14 @@ class AddBlog(APIView):
 
 class GetBlog(APIView):
     def get(self, request: Request):
-        try:
             id_ = request.query_params.get('id')
 
+        response = self.select(id_)
+        return response
+            
+
+    def select(self, id_) -> Response:
+        try:
             if id_ is None:
                 return Response({
                     'status': 400,
@@ -72,7 +77,6 @@ class GetBlog(APIView):
                     'status': 200,
                     'response': serializer.data
                 })
-
         except Exception as e:
             logging.Logger('warning').warning(e)
             return Response({
