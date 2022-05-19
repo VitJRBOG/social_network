@@ -10,8 +10,12 @@ from ..accounts.models import Profile
 
 class AddBlog(APIView):
     def post(self, request: Request):
+        response = self.insert(request.data)
+        return response
+
+    def insert(self, data):
         try:
-            serializer = BlogSerializer(data=request.data)
+            serializer = BlogSerializer(data=data)
 
             if serializer.is_valid():
 
