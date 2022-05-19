@@ -292,9 +292,15 @@ class AddBlogPostReadMark(APIView):
 
 class GetBlogPostReadMark(APIView):
     def get(self, request: Request):
-        try:
         profile_id = request.query_params.get('profile_id')
 
+        blogpost_id = request.query_params.get('blogpost_id')
+
+        response = self.select(profile_id, blogpost_id)            
+        return response
+
+    def select(self, profile_id, blogpost_id) -> Response:
+        try:
             if profile_id is None:
                 return Response({
                     'status': 400,
@@ -312,8 +318,6 @@ class GetBlogPostReadMark(APIView):
                         'response': 'Профиль с указанным "profile_id" не найден.'
                     })
             
-            blogpost_id = request.query_params.get('blogpost_id')
-
             if blogpost_id is None:
                 return Response({
                     'status': 400,
@@ -345,7 +349,6 @@ class GetBlogPostReadMark(APIView):
                     'status': 200,
                     'response': serializer.data
                 })
-
         except Exception as e:
             logging.Logger('warning').warning(e)
             return Response({
