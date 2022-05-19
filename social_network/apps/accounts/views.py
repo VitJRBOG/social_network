@@ -11,8 +11,12 @@ from ..sources.models import Blog
 class AddProfile(APIView):
 
     def post(self, request: Request):
+        response = self.insert(request.data)
+        return response
+
+    def insert(self, data):
         try:
-            serializer = ProfileSerializer(data=request.data)
+            serializer = ProfileSerializer(data=data)
 
             if serializer.is_valid():
                 serializer.save()
