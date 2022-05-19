@@ -6,6 +6,46 @@ from utils import logging
 from .models import Following, Profile
 from .serializers import ProfileSerializer, FollowingSerializer
 from ..sources.models import Blog
+from ..sources.views import AddBlog
+
+
+class UserRegistration(APIView):
+    def post(self, request: Request):
+
+        profile_info = {
+            'name': request.POST.get('name'),  # type: ignore
+            'login': request.POST.get('login'),  # type: ignore
+            'password_hash': request.POST.get('password_hash'),  # type: ignore
+        }
+
+        add_profile_resp = AddProfile().insert(profile_info)
+
+        if add_profile_resp.data['status'] != 200:
+            return add_profile_resp
+
+        blog_info = {
+            'name': profile_info['name'],
+            'profile_id': add_profile_resp.data['response']['id'],
+        }
+
+        add_blog_resp = AddBlog().insert(blog_info)
+
+        if add_blog_resp.data['status'] != 200:
+            return add_blog_resp
+
+        user_info = {
+            'login': profile_info['login'],
+            'password_hash': profile_info['password_hash'],
+            'profile_id': blog_info['profile_id'],
+            'profile_name': profile_info['name'],
+            'blog_id': add_blog_resp.data['response']['id'],
+            'blog_name': blog_info['name'],
+        }
+        
+        return Response({
+            'status': 200,
+            'response': user_info,
+        })
 
 
 class AddProfile(APIView):
