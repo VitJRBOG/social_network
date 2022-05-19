@@ -11,14 +11,19 @@ from ..sources.views import GetBlog, GetBlogPost, GetBlogPostReadMark
 class GetFeed(APIView):
 
     def get(self, request: Request):
-        try:
-            profile_id = request.query_params.get('profile_id')
+        profile_id = request.query_params.get('profile_id')
+        offset = request.query_params.get('offset')
 
+        feed_resp = self.select(profile_id, offset)
+        return feed_resp
+
+    def select(self, profile_id, offset):
+        try:
             followings_resp = GetFollowingInfo().select(profile_id)
 
             blog_ids = self.__parse_followings_for_blogs(followings_resp.data)
 
-            blogposts_resp = GetBlogPost().select(blog_ids, request.query_params.get('offset'))
+            blogposts_resp = GetBlogPost().select(blog_ids, offset)
 
             feed_posts = self.__compose_feed_posts(profile_id, blogposts_resp.data)
 
