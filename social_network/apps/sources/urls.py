@@ -13,4 +13,5 @@ urlpatterns = [
     path('blogpost/delete', views.DeleteBlogPost.as_view()),
 
     path('blogpostReadMark/add', views.AddBlogPostReadMark.as_view()),
+    path('blogpostReadMark/get', views.GetBlogPostReadMark.as_view()),
 ]

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from utils import logging
-from .models import Blog, BlogPost
+from .models import Blog, BlogPost, BlogPostReadMark
 from .serializers import BlogSerializer, BlogPostSerializer, BlogPostReadMarkSerializer
 from ..accounts.models import Profile
 
@@ -276,4 +276,43 @@ class AddBlogPostReadMark(APIView):
             return Response({
                     'status': 500,
                     'response': 'Ошибка создания метки "Прочитано".'
+                })
+
+
+class GetBlogPostReadMark(APIView):
+    def get(self, request: Request):
+        try:
+            id_ = request.query_params.get('id')
+
+            if id_ is None:
+                return Response({
+                    'status': 400,
+                    'response': {
+                        'id':
+                            [
+                                'Обязательное поле.'
+                            ]
+                        }
+                    })
+
+            queryset = BlogPostReadMark.objects.filter(id=id_)
+
+            if queryset.count() == 0:
+                return Response({
+                        'status': 404,
+                        'response': 'Записей с указанным "id" не найдено.'
+                    })
+
+            serializer = BlogPostReadMarkSerializer(instance=queryset, many=True)
+
+            return Response({
+                    'status': 200,
+                    'response': serializer.data
+                })
+
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка запроса выборки меток "Прочитано".'
                 })
