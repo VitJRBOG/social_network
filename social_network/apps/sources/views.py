@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from utils import logging
 from .models import Blog, BlogPost
-from .serializers import BlogSerializer, BlogPostSerializer
+from .serializers import BlogSerializer, BlogPostSerializer, BlogPostReadMarkSerializer
 from ..accounts.models import Profile
 
 
@@ -234,4 +234,46 @@ class DeleteBlogPost(APIView):
             return Response({
                     'status': 500,
                     'response': 'Ошибка удаления поста блога.'
+                })
+
+
+class AddBlogPostReadMark(APIView):
+    def post(self, request: Request):
+        try:
+            serializer = BlogPostReadMarkSerializer(data=request.data)
+
+            if serializer.is_valid():
+
+                profile_id = serializer.validated_data.get('profile_id')  # type: ignore
+
+                if not Profile.objects.filter(id=profile_id).exists():
+                    return Response({
+                            'status': 404,
+                            'response': 'Профиль с указанным "profile_id" не найден.'
+                        })
+
+                blogpost_id = serializer.validated_data.get('blogpost_id')  # type: ignore
+
+                if not BlogPost.objects.filter(id=blogpost_id).exists():
+                    return Response({
+                            'status': 404,
+                            'response': 'Пост с указанным "blogpost_id" не найден.'
+                        })
+
+                serializer.save()
+
+                return Response({
+                        'status': 200,
+                        'response': serializer.data
+                    })
+            else:
+                return Response({
+                        'status': 400,
+                        'response': serializer.errors
+                    })
+        except Exception as e:
+            logging.Logger('warning').warning(e)
+            return Response({
+                    'status': 500,
+                    'response': 'Ошибка создания метки "Прочитано".'
                 })
