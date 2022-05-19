@@ -44,8 +44,8 @@ class AddBlog(APIView):
 
 class GetBlog(APIView):
     def get(self, request: Request):
-            id_ = request.query_params.get('id')
-
+        id_ = request.query_params.get('id')
+        
         response = self.select(id_)
         return response
             
@@ -160,10 +160,17 @@ class AddBlogPost(APIView):
 
 class GetBlogPost(APIView):
     def get(self, request: Request):
-        try:
-            condition = self.__compose_condition(request.query_params.get('blog_ids'))
 
-            offset = request.query_params.get('offset')
+        blog_ids = request.query_params.get('blog_ids')
+        
+        offset = request.query_params.get('offset')
+
+        response = self.select(blog_ids, offset)
+        return response
+
+    def select(self, blog_ids, offset) -> Response:
+        try:
+            condition = self.__compose_condition(blog_ids)
 
             if offset is None:
                 offset = 0
@@ -286,7 +293,7 @@ class AddBlogPostReadMark(APIView):
 class GetBlogPostReadMark(APIView):
     def get(self, request: Request):
         try:
-            profile_id = request.query_params.get('profile_id')
+        profile_id = request.query_params.get('profile_id')
 
             if profile_id is None:
                 return Response({
@@ -304,7 +311,7 @@ class GetBlogPostReadMark(APIView):
                         'status': 404,
                         'response': 'Профиль с указанным "profile_id" не найден.'
                     })
-
+            
             blogpost_id = request.query_params.get('blogpost_id')
 
             if blogpost_id is None:
