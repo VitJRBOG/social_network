@@ -156,9 +156,14 @@ class AddFollowing(APIView):
 
 class GetFollowingInfo(APIView):
     def get(self, request: Request):
-        try:
-            profile_id = request.query_params.get('profile_id')
+        profile_id = request.query_params.get('profile_id')
 
+        response = self.select(profile_id)
+        return response
+
+    def select(self, profile_id) -> Response:
+        try:
+            
             if not Profile.objects.filter(id=profile_id).exists():
                 return Response({
                         'status': 404,
