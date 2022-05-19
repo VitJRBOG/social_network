@@ -86,26 +86,24 @@ class GetProfileInfo(APIView):
         response = self.select(id_)
         return response
 
-    def select(self, id_):
+    def select(self, id_ = None):
         try:
             if id_ is None:
-                return Response({
-                    'status': 400,
-                    'response': {
-                        'id':
-                            [
-                                'Обязательное поле.'
-                            ]
-                        }
-                    })
+                queryset = Profile.objects.all()
 
-            queryset = Profile.objects.filter(id=id_)
+                if queryset.count() == 0:
+                    return Response({
+                            'status': 404,
+                            'response': 'Записи не найдены.'
+                        })
+            else:
+                queryset = Profile.objects.filter(id=id_)
 
-            if queryset.count() == 0:
-                return Response({
-                        'status': 404,
-                        'response': 'Записей с указанным "id" не найдено.'
-                    })
+                if queryset.count() == 0:
+                    return Response({
+                            'status': 404,
+                            'response': 'Записей с указанным "id" не найдено.'
+                        })
 
             serializer = ProfileSerializer(instance=queryset, many=True)
 
