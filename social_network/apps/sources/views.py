@@ -157,7 +157,16 @@ class AddBlogPost(APIView):
 class GetBlogPost(APIView):
     def get(self, request: Request):
         try:
-            queryset = BlogPost.objects.all()
+            condition = self.__compose_condition(request.query_params.get('blog_ids'))
+
+            offset = request.query_params.get('offset')
+
+            if offset is None:
+                offset = 0
+            else:
+                offset = int(offset)
+
+            queryset = BlogPost.objects.extra(where=[condition]).order_by('date')[offset:offset+10]
 
             if queryset.count() == 0:
                 return Response({
@@ -178,6 +187,16 @@ class GetBlogPost(APIView):
                     'status': 500,
                     'response': 'Ошибка получения постов блога.'
                 })
+
+    def __compose_condition(self, blog_ids) -> str:
+        condition = ''
+        ids = blog_ids.split(',')
+        for i, item in enumerate(ids):
+            if i > 0:
+                condition += ' or '
+            condition += f'blog_id={item}'
+        
+        return condition
 
 
 class DeleteBlogPost(APIView):
