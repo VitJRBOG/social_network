@@ -157,7 +157,15 @@ class AddFollowing(APIView):
 class GetFollowingInfo(APIView):
     def get(self, request: Request):
         try:
-            queryset = Following.objects.all()
+            profile_id = request.query_params.get('profile_id')
+
+            if not Profile.objects.filter(id=profile_id).exists():
+                return Response({
+                        'status': 404,
+                        'response': 'Профиль с указанным "profile_id" не найден.'
+                    })
+
+            queryset = Following.objects.filter(profile_id=profile_id)
 
             if queryset.count() == 0:
                 return Response({
